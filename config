@@ -1,0 +1,7 @@
+#!/bin/bash
+# Filepath from repo root: ./config
+# Job: global config file for packer builds 
+
+# which packer target is choosen ? From options: openstack,docker,ami
+PACKER_TARGET="docker"
+

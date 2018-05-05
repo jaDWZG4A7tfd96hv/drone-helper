@@ -1,0 +1,27 @@
+{
+  "builders": [{
+      "type": "openstack",
+      "username": "$OPENSTACK_USERNAME",
+      "password": "$OPENSTACK_PASSWORD",
+      "domain_name": "Default",
+      "region": "RegionOne",
+      "tenant_name": "$OPENSTACK_TENANT_NAME",
+      "image_name": "packer-test-image",
+      "source_image": "djas8988-dada-4344-fasd-394384hjkjkh",
+      "identity_endpoint": "http://10.1.1.1:5000/v3/",
+      "flavor": "m1.small",
+      "networks": ["djaskdj8-dasd-3434.5454-dasjkdkjs898"],
+      "security_groups": ["TestName"],
+      "ssh_username": "ubuntu"
+    }
+  ],
+  "provisioners": [{
+    "type": "shell",
+    "inline": [
+      "sleep 30",
+      "sudo apt-get update",
+      "sudo apt-get install -y nginx"
+    ]
+  }]
+}
+
