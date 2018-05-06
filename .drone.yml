@@ -1,0 +1,5 @@
+pipeline:
+  build:
+    image: ubuntu:18.04
+    commands:
+      - /bin/bash packerRoll.sh

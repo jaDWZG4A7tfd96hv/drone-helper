@@ -1,3 +1,5 @@
 SECRETS
 tmp/
 BACKLOG
+docker-compose-dir/db/
+docker-compose-dir/data/

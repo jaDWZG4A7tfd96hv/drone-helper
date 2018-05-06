@@ -2,7 +2,7 @@ version: '2'
 
 services:
   drone-server:
-    image: drone/drone:0.8
+    image: drone/drone:0.8-alpine
 
     ports:
       - 8000:8000
@@ -11,14 +11,19 @@ services:
       - /var/lib/drone:/var/lib/drone/
     restart: always
     environment:
-      - DRONE_OPEN=true
-      - DRONE_HOST=http://localhost:9000
-      - DRONE_SECRET=testing
+      - DRONE_OPEN=false
+      - DRONE_HOST=http://172.30.0.201:9000
+      - DRONE_SECRET=gitea
       - DRONE_GITEA=true
-      - DRONE_GITEA_URL=http://localhost:3000
+      - DRONE_GITEA_URL=http://172.30.0.200:3000
+      - DRONE_ADMIN=gitea
 
+
+    networks:
+      static-network:
+        ipv4_address: 172.30.0.201
   drone-agent:
-    image: drone/agent:0.8
+    image: drone/agent:0.8-alpine
 
     command: agent
     restart: always
@@ -27,7 +32,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - DRONE_SERVER=localhost:9000
+      - DRONE_SERVER=172.30.0.201:9000
       - DRONE_SECRET=testing
 
 
@@ -41,13 +46,28 @@ services:
     depends_on:
       - db
     restart: always
+
+    networks:
+       static-network:
+         ipv4_address: 172.30.0.200
   db:
     image: mariadb:10
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=changemelater
+      - MYSQL_ROOT_PASSWORD=gitea
       - MYSQL_DATABASE=gitea
       - MYSQL_USER=gitea
-      - MYSQL_PASSWORD=changemelater
+      - MYSQL_PASSWORD=gitea
     volumes:
       - ./db/:/var/lib/mysql
+
+
+
+
+networks:
+  static-network:
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+          ip_range: 172.30.0.0/24
+
