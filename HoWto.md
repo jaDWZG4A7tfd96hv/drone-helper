@@ -29,3 +29,9 @@ Authentication -> Drone will prompt you for a username and password to authentic
   * git push -u origin master
 
 - change the webhook URL : HTTP://localhost:8000/... -> HTTP://DRONE_SERVER_IP:8000/...
+
+- webhook : http://drone-server:8000/hook?access_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZXh0IjoibHdhc2hpbmd0b24iLCJ0eXBlIjoidXNlciJ9.DBVyH2WkZ602GGz0PYU4W4S79dK5V-k0x7PRF43BZLo
+-- the token: is found in the drone session, when you click on the menu on 'token'
+-- secret : the drone_secret in the docker compose file
+
+- in the gogs/gitea install form: you have to enter the hostnames without the domain : e.g. gogs instead of gogs.docker.localhost

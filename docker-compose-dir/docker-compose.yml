@@ -1,8 +1,10 @@
 version: '3'
 
 services:
+
   drone-server:
-    image: drone/drone:0.8.5
+    image: drone/drone:latest
+    container_name: drone-server
     ports:
       - 8000:8000
       - 9000:9000
@@ -12,17 +14,17 @@ services:
     environment:
       - DRONE_OPEN=false
       - DRONE_HOST=http://drone-server:9000
-      - DRONE_SECRET=gitea
+      - DRONE_SECRET=docker
       - DRONE_GITEA=true
-      - DRONE_GITEA_URL=http://gitea:3000
-      - DRONE_ADMIN=gitea
-    labels:
-      - "traefik.backend=drone-server"
-      - "traefik.frontend.rule=Host:drone-server.docker.localhost"
-
+      - DRONE_GITEA_URL=http://gogs:3000
+      - DRONE_ADMIN=docker
+      - DRONE_NETWORK=gitea-network
+    networks:
+      - default
 
   drone-agent:
-    image: drone/agent:0.8.5
+    image: drone/agent:latest
+    container_name: drone-agent
     command: agent
     restart: always
     depends_on:
@@ -31,13 +33,14 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - DRONE_SERVER=drone-server:9000
-      - DRONE_SECRET=gitea
-    labels:
-      - "traefik.backend=drone-agent"
-      - "traefik.frontend.rule=Host:drone-agent.docker.localhost"
+      - DRONE_SECRET=docker
+      - DRONE_NETWORK=primary_network
+    networks:
+      - default
 
-  gitea:
+  gogs:
     image: gitea/gitea:1.4.1
+    container_name: gogs
     volumes:
       - ./data:/data
     ports:
@@ -46,20 +49,23 @@ services:
     depends_on:
       - db
     restart: always
-    labels:
-      - "traefik.backend=gitea"
-      - "traefik.frontend.rule=Host:gitea.docker.localhost"
+    networks:
+      - default
+    extra_hosts:
+      - "drone-serverTest:162.242.195.82"
+      - "otherhost:50.31.209.229"
 
   db:
     image: mariadb:10
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=gitea
-      - MYSQL_DATABASE=gitea
-      - MYSQL_USER=gitea
-      - MYSQL_PASSWORD=gitea
+      - MYSQL_ROOT_PASSWORD=docker
+      - MYSQL_DATABASE=docker
+      - MYSQL_USER=docker
+      - MYSQL_PASSWORD=docker
     volumes:
       - ./db/:/var/lib/mysql
+    network_mode: bridge
 
   dnsmasq:
     image: andyshinn/dnsmasq:2.75
@@ -68,28 +74,11 @@ services:
     - 172.17.0.1:53:53/udp 
     cap_add:
     - NET_ADMIN
-
-
-  traefik:
-    image: library/traefik:1.3.6
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - $PWD/traefik.toml:/traefik.toml
-      - $PWD/acme.json:/acme.json
-    ports:
-      - 443:443
-      - 80:80
-      - 8080:8080
-    labels:
-      - traefik.frontend.rule=Host:web
-      - traefik.port=8080
-    networks:
-      - proxy
-    restart: always 
+    restart: always
+    network_mode: bridge
 
 
 networks:
-  proxy:
-    external: true
-  internal:
-    external: false
+  default:
+    external:
+      name: gitea-network

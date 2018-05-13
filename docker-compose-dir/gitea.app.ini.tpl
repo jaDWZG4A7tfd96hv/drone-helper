@@ -1,59 +1,71 @@
-APP_NAME = Gitea
-RUN_USER = git
+APP_NAME = Gitea: Git with a cup of tea
 RUN_MODE = prod
+RUN_USER = git 
 
 [repository]
-ROOT = /data/git/repositories
-
-[repository.upload]
-TEMP_PATH = /data/gitea/uploads
-
-[server]
-APP_DATA_PATH    = /data/gitea
-PROTOCOL         = http
-DOMAIN           = gitea.try
-HTTP_PORT        = 3000
-ROOT_URL         = http://gitea.try:3000
+ROOT = /data/git/repositories            
+                                         
+[repository.upload]                      
+TEMP_PATH = /data/gitea/uploads          
+                                         
+[server]                                 
+APP_DATA_PATH    = /data/gitea          
+SSH_DOMAIN       = gitea.docker.localhost
+HTTP_PORT        = 3000                                
+ROOT_URL         = http://gitea:3000/
 DISABLE_SSH      = false
-START_SSH_SERVER = false
-SSH_DOMAIN       = gitea.try
-SSH_PORT         = 22
+SSH_PORT         = 22      
+DOMAIN           = gitea
+LFS_START_SERVER = true
+LFS_CONTENT_PATH = /data/gitea/lfs
+LFS_JWT_SECRET   = vxA0cHnWjpm5kfnmayfPQJX5-PQSuEGH5IPN6Bmdw0M
 OFFLINE_MODE     = false
-LFS_START_SERVER = false
-
+ 
 [database]
-DB_TYPE = sqlite3
-PATH    = /data/gitea/gitea.db
-
+PATH     = /data/gitea/gitea.db
+DB_TYPE  = sqlite3
+HOST     = localhost:3306
+NAME     = gitea
+USER     = root
+PASSWD   =
+SSL_MODE = disable
+ 
 [session]
-PROVIDER        = file
 PROVIDER_CONFIG = /data/gitea/sessions
-
+PROVIDER        = file
+ 
 [picture]
 AVATAR_UPLOAD_PATH      = /data/gitea/avatars
-DISABLE_GRAVATAR        = true
-ENABLE_FEDERATED_AVATAR = false
-
+DISABLE_GRAVATAR        = false
+ENABLE_FEDERATED_AVATAR = true
+ 
 [attachment]
 PATH = /data/gitea/attachments
-
+ 
 [log]
-MODE      = file
-LEVEL     = info
 ROOT_PATH = /data/gitea/log
-
-[service]
-REGISTER_EMAIL_CONFIRM    = false
-ENABLE_NOTIFY_MAIL        = false
-DISABLE_REGISTRATION      = true
-ENABLE_CAPTCHA            = false
-REQUIRE_SIGNIN_VIEW       = true
-DEFULT_KEEP_EMAIL_PRIVATE = false
-NO_REPLY_ADDRESS          = noreply@gitea.try
-
-[mailer]
-ENABLED = false
-
+MODE      = file
+LEVEL     = Info
+ 
 [security]
-INSTALL_LOCK = false
-
+INSTALL_LOCK   = true
+SECRET_KEY     = pXanPejKws
+INTERNAL_TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE1MjU5NjUzODZ9.JdGTICoENaq1jUiTkEActt
+                                         
+[mailer]                                               
+ENABLED = false                          
+                                         
+[service]                                
+REGISTER_EMAIL_CONFIRM            = false
+ENABLE_NOTIFY_MAIL                = false
+DISABLE_REGISTRATION              = false              
+ENABLE_CAPTCHA                    = false
+REQUIRE_SIGNIN_VIEW               = false
+DEFAULT_KEEP_EMAIL_PRIVATE        = false
+DEFAULT_ALLOW_CREATE_ORGANIZATION = true
+DEFAULT_ENABLE_TIMETRACKING       = true
+NO_REPLY_ADDRESS                  = noreply.example.org
+     
+[openid]                   
+ENABLE_OPENID_SIGNIN = true
+ENABLE_OPENID_SIGNUP = true

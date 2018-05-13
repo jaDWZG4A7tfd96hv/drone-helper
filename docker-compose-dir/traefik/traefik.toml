@@ -1,0 +1,52 @@
+defaultEntryPoints = ["http", "https"]
+
+[web]
+address = ":8080"
+  [web.auth.basic]
+  users = ["admin:$apr1$JotM89Hy$Jqf9oSXV3PmHR/No8cmhx0"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+      entryPoint = "https"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+    [[entryPoints.https.tls.certificates]]
+      certFile = "/certs/localCert.crt"
+      keyFile = "/certs/localCert.key"
+
+[acme]
+email = "your_email@example.com"
+storage = "acme.json"
+entryPoint = "https"
+onHostRule = true
+onDemand = false
+
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "docker.localhost"
+watch = true
+exposedbydefault = true
+
+[backends]
+  [backends.gitea]
+    [backends.gitea.servers.server1]
+       url = "http://gitea:3000"
+  [backends.drone]
+    [backends.drone.servers.server1]
+       url = "http://drone-server:8000"
+
+[frontends]
+  [frontends.drone]
+      backend = "drone"
+      passHostHeader = true
+      [frontends.drone.routes.example]
+      rule = "Host:drone-server"
+  [frontends.gitea]
+      backend = "gitea"
+      passHostHeader = true
+      [frontends.gitea.routes.example]
+      rule = "Host:gitea"
